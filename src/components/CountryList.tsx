@@ -4,14 +4,14 @@ import { CountryType } from "../types/data";
 import CountryCard from "./CountryCard";
 import { AxiosError } from "axios";
 
-const CountryList: React.FC = () => {
+function CountryList() {
   const [data, setData] = useState<CountryType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | null>(null);
-  //   const [selectedCountries, setSelectedCountries] = useState<CardType[]>([]);
+  const [selectedCountries, setSelectedCountries] = useState<CountryType[]>([]);
 
   useEffect(() => {
-    const getdata = async () => {
+    const getData = async () => {
       try {
         const data = await fetchData();
         setData(data);
@@ -27,7 +27,7 @@ const CountryList: React.FC = () => {
       }
     };
 
-    getdata();
+    getData();
   }, []);
 
   if (loading) {
@@ -35,26 +35,60 @@ const CountryList: React.FC = () => {
   }
 
   if (error) {
-    return <div>error</div>;
+    return <div>Error: {error.message}</div>;
   }
+
+  const handleAddCountry = (country: CountryType) => {
+    const favoriteCountry = { ...country, isDone: !country.isDone };
+
+    setData((prevData) =>
+      prevData.map((item) =>
+        item.cca2 === country.cca2 ? favoriteCountry : item
+      )
+    );
+
+    if (favoriteCountry.isDone) {
+      setSelectedCountries((prevSelected) => [
+        ...prevSelected,
+        favoriteCountry,
+      ]);
+    } else {
+      setSelectedCountries((prevSelected) =>
+        prevSelected.filter((item) => item.cca2 !== country.cca2)
+      );
+    }
+  };
 
   return (
     <>
-      <h2>Countries</h2>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        {data.map((country) => (
-          <CountryCard
-            key={country.cca2}
-            country={{
-              flags: country.flags,
-              name: country.name,
-              capital: country.capital,
-            }}
-          />
-        ))}
+      <div>
+        <h2>Favorite Countries</h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+          {selectedCountries.map((country) => (
+            <CountryCard
+              key={country.cca2}
+              country={country}
+              onClick={() => handleAddCountry(country)}
+            />
+          ))}
+        </div>
+      </div>
+      <div>
+        <h2>Countries</h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+          {data
+            .filter((country) => !country.isDone)
+            .map((country) => (
+              <CountryCard
+                key={country.cca2}
+                country={country}
+                onClick={() => handleAddCountry(country)}
+              />
+            ))}
+        </div>
       </div>
     </>
   );
-};
+}
 
 export default CountryList;

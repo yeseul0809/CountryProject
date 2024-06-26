@@ -7,7 +7,7 @@ export const fetchData = async (): Promise<CountryType[]> => {
   );
   const data = response.data;
 
-  // isDone 있는 데이터로 변경
+  // isDone, index 있는 데이터로 변경
   const countryData: CountryType[] = data.map((country) => ({
     cca2: country.cca2,
     flags: country.flags,
