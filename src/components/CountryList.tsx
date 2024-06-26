@@ -39,45 +39,50 @@ function CountryList() {
   }
 
   const handleAddCountry = (country: CountryType) => {
-    const favoriteCountry = { ...country, isDone: !country.isDone };
+    const favoriteCountry = { ...country, isSelected: !country.isSelected };
 
     setData((prevData) =>
-      prevData.map((item) =>
-        item.cca2 === country.cca2 ? favoriteCountry : item
+      prevData.map((clickCountry) =>
+        clickCountry.cca2 === country.cca2 ? favoriteCountry : clickCountry
       )
     );
 
-    if (favoriteCountry.isDone) {
+    if (favoriteCountry.isSelected) {
       setSelectedCountries((prevSelected) => [
         ...prevSelected,
         favoriteCountry,
       ]);
     } else {
       setSelectedCountries((prevSelected) =>
-        prevSelected.filter((item) => item.cca2 !== country.cca2)
+        prevSelected.filter(
+          (clickCountry) => clickCountry.cca2 !== country.cca2
+        )
       );
     }
   };
 
   return (
-    <>
+    <div className="container mx-auto p-6">
       <div>
-        <h2>Favorite Countries</h2>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Favorite Countries
+        </h1>
+        <div className="country-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {selectedCountries.map((country) => (
             <CountryCard
               key={country.cca2}
               country={country}
               onClick={() => handleAddCountry(country)}
+              isSelected={true}
             />
           ))}
         </div>
       </div>
       <div>
-        <h2>Countries</h2>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <h1 className="text-3xl font-bold text-center mt-8 mb-8">Countries</h1>
+        <div className="country-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {data
-            .filter((country) => !country.isDone)
+            .filter((country) => !country.isSelected)
             .map((country) => (
               <CountryCard
                 key={country.cca2}
@@ -87,7 +92,7 @@ function CountryList() {
             ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

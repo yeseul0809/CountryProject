@@ -1,5 +1,5 @@
 export type CountryType = Pick<Data, "cca2" | "flags" | "name" | "capital"> & {
-  isDone: boolean;
+  isSelected: boolean;
 };
 
 export interface Data {
